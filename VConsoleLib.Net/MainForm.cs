@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace WindowsFormsApplication1
@@ -32,6 +33,12 @@ namespace WindowsFormsApplication1
             Console.SetOut(_consoleWriter);
         }
 
+        // Specify what you want to happen when the Elapsed event is raised.
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            _consoleWriter.refresh();
+        }
+
         private void connectButton_Click(object sender, EventArgs eventInfo)
         {
             try
@@ -48,7 +55,12 @@ namespace WindowsFormsApplication1
 
                 reader = new ReadThread();
                 readThread = new Thread(reader.Thread);
-                readThread.Start(stream);               
+                readThread.Start(stream);
+
+                System.Timers.Timer aTimer = new System.Timers.Timer();
+                aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+                aTimer.Interval = 100;
+                aTimer.Enabled = true;
             }
 
             catch (Exception e)
