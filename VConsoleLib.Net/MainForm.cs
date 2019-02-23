@@ -29,14 +29,14 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            _consoleWriter = new ConsoleStringWriter(this);
-            Console.SetOut(_consoleWriter);
+            //_consoleWriter = new ConsoleStringWriter(this);
+            //Console.SetOut(_consoleWriter);
         }
 
         // Specify what you want to happen when the Elapsed event is raised.
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            _consoleWriter.refresh();
+            //_consoleWriter.refresh();
         }
 
         private void connectButton_Click(object sender, EventArgs eventInfo)
@@ -57,10 +57,10 @@ namespace WindowsFormsApplication1
                 readThread = new Thread(reader.Thread);
                 readThread.Start(stream);
 
-                System.Timers.Timer aTimer = new System.Timers.Timer();
-                aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-                aTimer.Interval = 100;
-                aTimer.Enabled = true;
+                //System.Timers.Timer aTimer = new System.Timers.Timer();
+                //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+                //aTimer.Interval = 100;
+                //aTimer.Enabled = true;
             }
 
             catch (Exception e)

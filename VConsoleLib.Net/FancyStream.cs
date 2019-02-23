@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,9 +11,9 @@ namespace WindowsFormsApplication1
 {
     class FancyStream
     {
-        public NetworkStream stream;
+        public Stream stream;
 
-        public FancyStream(NetworkStream stream)
+        public FancyStream(Stream stream)
         {
             this.stream = stream;
         }
@@ -42,6 +43,20 @@ namespace WindowsFormsApplication1
             byte d = (byte)stream.ReadByte();
 
             return BitConverter.ToSingle(new byte[4] { d, c, b, a }, 0);
+        }
+        public string ReadString()
+        {
+            var list = new List<byte>();
+            while (true)
+            {
+                var character = (byte)stream.ReadByte();
+                if (character == 0x00)
+                {
+                    break;
+                }
+                list.Add(character);
+            }
+            return Encoding.ASCII.GetString(list.ToArray());
         }
 
         public void WriteInt(UInt32 value)

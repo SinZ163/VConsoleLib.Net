@@ -23,12 +23,7 @@ namespace WindowsFormsApplication1.Packets
 
         public void ReadPacket(FancyStream stream)
         {
-            List<byte> msg = new List<byte>();
-            for (int j = 0; j < (64); j++)
-            {
-                msg.Add(stream.ReadByte());
-            }
-            name = Encoding.ASCII.GetString(msg.ToArray());
+            name = stream.ReadString();
             unknown = stream.ReadInt();
             flags = stream.ReadInt();
             rangemin = stream.ReadFloat();

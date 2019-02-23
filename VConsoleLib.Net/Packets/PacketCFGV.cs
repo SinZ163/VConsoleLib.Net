@@ -13,16 +13,11 @@ namespace WindowsFormsApplication1.Packets
             get { return "CFGV"; }
         }
 
-        public byte[] unknown;
+        public string unknown;
 
         public void ReadPacket(FancyStream stream)
         {
-            var info = new List<byte>();
-            for (int i = 0; i < 129; i++)
-            {
-                info.Add(stream.ReadByte());
-            }
-            unknown = info.ToArray();
+            unknown = stream.ReadString();
         }
     }
 }

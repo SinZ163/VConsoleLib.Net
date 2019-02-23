@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,12 +18,16 @@ namespace WindowsFormsApplication1
                 UInt32 version = stream.ReadInt();
                 UInt16 length = stream.ReadShort();
                 UInt16 handle = stream.ReadShort();
+                byte[] payload = new byte[length - 12];
+                stream.stream.Read(payload, 0, length - 12);
+                var payloadStream = new MemoryStream(payload);
+                //Console.WriteLine($"{packetID} {version} {length} {handle}");
                 //Console.WriteLine("Received packet: " + packetID);
                 switch (packetID)
                 {
                     case "AINF":
                         var packetAINF = new Packets.PacketAINF();
-                        packetAINF.ReadPacket(stream);
+                        packetAINF.ReadPacket(new FancyStream(payloadStream));
                         //Console.WriteLine(packetAINF.unknown1 + " | " + packetAINF.unknown2);
                         //Console.WriteLine(packetAINF.unknown3 + " | " + packetAINF.unknown4);
                         //Console.WriteLine(packetAINF.unknown5 + " | " + packetAINF.unknown6);
@@ -36,13 +41,13 @@ namespace WindowsFormsApplication1
                         break;
                     case "ADON":
                         var packetADON = new Packets.PacketADON();
-                        packetADON.ReadPacket(stream);
+                        packetADON.ReadPacket(new FancyStream(payloadStream));
                         Console.WriteLine(packetADON.unknown);
                         Console.WriteLine(packetADON.name);
                         break;
                     case "CHAN":
                         var packetCHAN = new Packets.PacketCHAN();
-                        packetCHAN.ReadPacket(stream);
+                        packetCHAN.ReadPacket(new FancyStream(payloadStream));
                         foreach (Types.Channel channel in packetCHAN.channels) {
                             //This is too spammy
                             //Console.WriteLine("Channel \"" + channel.name + "\" (" + channel.ID + ")");
@@ -50,24 +55,25 @@ namespace WindowsFormsApplication1
                         break;
                     case "PRNT":
                         var packetPRNT = new Packets.PacketPRNT(length);
-                        packetPRNT.ReadPacket(stream);
+                        packetPRNT.ReadPacket(new FancyStream(payloadStream));
                         Console.WriteLine("["+packetPRNT.channelID+"] "+packetPRNT.message);    
                         break;
                     case "CVAR":
                         var packetCVAR = new Packets.PacketCVAR();
-                        packetCVAR.ReadPacket(stream);
+                        packetCVAR.ReadPacket(new FancyStream(payloadStream));
                         //This is too spammy
-                        //Console.WriteLine("\"" + packetCVAR.name + "\" with range [" + packetCVAR.rangemin + ", " + packetCVAR.rangemax + "] and flags " + packetCVAR.flags);
+                        Console.WriteLine("\"" + packetCVAR.name + "\" with range [" + packetCVAR.rangemin + ", " + packetCVAR.rangemax + "] and flags " + packetCVAR.flags);
                         break;
                     case "CFGV":
                         var packetCFGV = new Packets.PacketCFGV();
-                        packetCFGV.ReadPacket(stream);
+                        packetCFGV.ReadPacket(new FancyStream(payloadStream));
+                        Console.WriteLine(packetCFGV.unknown);
                         break;
                     default:
-                        Console.WriteLine("UNKNOWN PACKET, PANIC!!");
+                        Console.WriteLine("UNKNOWN PACKET "+ packetID + ", PANIC!!");
                         for (int i = 0; i < (length - 12); i++)
                         {
-                            Console.Write(stream.ReadByte() + "|");
+                            Console.Write(new FancyStream(payloadStream).ReadByte() + "|");
                         }
                         Console.WriteLine();
                         System.Threading.Thread.Sleep(5000);
