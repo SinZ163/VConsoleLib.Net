@@ -54,7 +54,7 @@ namespace WindowsFormsApplication1
                         }
                         break;
                     case "PRNT":
-                        var packetPRNT = new Packets.PacketPRNT(length);
+                        var packetPRNT = new Packets.PacketPRNT();
                         packetPRNT.ReadPacket(new FancyStream(payloadStream));
                         Console.WriteLine("["+packetPRNT.channelID+"] "+packetPRNT.message);    
                         break;

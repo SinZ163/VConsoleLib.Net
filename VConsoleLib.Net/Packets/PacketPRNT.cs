@@ -13,13 +13,6 @@ namespace WindowsFormsApplication1.Packets
             get { return "PRNT"; }
         }
 
-        public PacketPRNT(UInt32 length)
-        {
-            this.length = length;
-        }
-
-        private UInt32 length;
-
         public UInt32 channelID;
         public byte[] unknown;
         public String message;
@@ -33,12 +26,7 @@ namespace WindowsFormsApplication1.Packets
                 info.Add(stream.ReadByte());
             }
             unknown = info.ToArray();
-            List<byte> msg = new List<byte>();
-            for (int j = 0; j < (length - 40); j++)
-            {
-                msg.Add(stream.ReadByte());
-            }
-            message = Encoding.ASCII.GetString(msg.ToArray());
+            message = stream.ReadString();
         }
     }
 }
